@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS PRO</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  color:white;
+  transition: all 0.5s ease;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  padding:20px;
+  border-radius:15px;
+  margin-top:20px;
+  animation: fadeIn 1s ease;
+}
+
+button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background: orange;
+  font-weight:bold;
+}
+
+.timer {
+  text-align:right;
+  color:red;
+  font-weight:bold;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+.slide {
+  animation: slideIn 0.7s ease;
+}
+
+@keyframes slideIn {
+  from {transform:translateX(50px); opacity:0;}
+  to {transform:translateX(0); opacity:1;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>IELTS PRO TEST</h1>
+<div class="timer" id="timer">15:00</div>
+
+<div class="card slide">
+<p id="passage"></p>
+</div>
+
+<div class="card" id="questions"></div>
+
+<button onclick="next()">Next Passage</button>
+<button onclick="finish()">Finish Test</button>
+
+</div>
+
+<script>
+
+// 🎨 RANDOM BACKGROUND
+const themes = [
+"linear-gradient(135deg,#1e3c72,#2a5298)",
+"linear-gradient(135deg,#ff7e5f,#feb47b)",
+"linear-gradient(135deg,#0f2027,#2c5364)",
+"linear-gradient(135deg,#11998e,#38ef7d)"
+];
+document.body.style.background = themes[Math.floor(Math.random()*themes.length)];
+
+
+// 📚 READINGS
+const readings = [
+
+{
+level:"easy",
+text:"People used letters in the past. Today, communication is faster due to technology.",
+questions:[
+{type:"tfng", q:"People used letters before.", a:"True"},
+{type:"tfng", q:"Technology slowed communication.", a:"False"},
+{type:"fill", q:"Communication is ___ today.", a:"faster"}
+]
+},
+
+{
+level:"medium",
+text:"Global warming is caused by human activities. It affects climate and sea levels worldwide.",
+questions:[
+{type:"tfng", q:"Global warming is natural only.", a:"False"},
+{type:"tfng", q:"Humans cause global warming.", a:"True"},
+{type:"fill", q:"It affects ___ levels.", a:"sea"}
+]
+},
+
+{
+level:"hard",
+text:"The industrial revolution marked a major turning point in history. It led to urbanization and technological advancement, significantly altering societal structures.",
+questions:[
+{type:"tfng", q:"Industrial revolution changed society.", a:"True"},
+{type:"tfng", q:"It had no impact.", a:"False"},
+{type:"fill", q:"It led to ___ advancement.", a:"technological"}
+]
+}
+
+];
+
+let current = {};
+let score = 0;
+
+// LOAD
+function load(){
+current = readings[Math.floor(Math.random()*readings.length)];
+
+document.getElementById("passage").innerText =
+"("+current.level.toUpperCase()+") "+current.text;
+
+let qHTML = "";
+
+current.questions.forEach((q,i)=>{
+if(q.type=="tfng"){
+qHTML += `
+<p>${i+1}. ${q.q}</p>
+<label><input type="radio" name="q${i}" value="True"> True</label><br>
+<label><input type="radio" name="q${i}" value="False"> False</label><br>
+<label><input type="radio" name="q${i}" value="Not Given"> Not Given</label><br>
+`;
+}
+else{
+qHTML += `
+<p>${i+1}. ${q.q}</p>
+<input type="text" id="q${i}">
+`;
+}
+});
+
+document.getElementById("questions").innerHTML = qHTML;
+}
+
+// CHECK
+function check(){
+current.questions.forEach((q,i)=>{
+if(q.type=="tfng"){
+let ans = document.querySelector(`input[name=q${i}]:checked`);
+if(ans && ans.value == q.a) score++;
+}else{
+let val = document.getElementById("q"+i).value.toLowerCase();
+if(val == q.a) score++;
+}
+});
+}
+
+// NEXT
+function next(){
+check();
+load();
+}
+
+// FINISH
+function finish(){
+check();
+alert("Your score: "+score);
+score=0;
+load();
+}
+
+// TIMER
+let time = 900;
+setInterval(()=>{
+time--;
+let m = Math.floor(time/60);
+let s = time%60;
+document.getElementById("timer").innerText = m+":"+(s<10?"0":"")+s;
+},1000);
+
+
+// START
+load();
+
+</script>
+
+</body>
+  </html>
