@@ -1,0 +1,126 @@
+<!DOCTYPE html><html>
+<head>
+<meta charset="UTF-8">
+<title>IELTS PRO</title><style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color: white;
+  margin: 0;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {text-align:center;}
+
+.passage {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: orange;
+  color: white;
+}
+
+.timer {
+  text-align:right;
+  color:red;
+}
+
+</style></head><body><div class="container"><h1>IELTS Reading Test</h1>
+<div class="timer" id="timer">20:00</div><div id="content"></div><button onclick="nextPassage()">Next Passage</button>
+<button onclick="finishTest()">Finish Test</button>
+
+<h2 id="result"></h2></div><script>
+
+let passages = [
+
+{
+text:`Artificial intelligence is transforming industries worldwide. While it enhances productivity, it also raises concerns about job security and ethical implications.`,
+questions:[
+{q:"What is a benefit of AI?", options:["Job loss","Productivity","Ethics"], a:1},
+{q:"What is a concern?", options:["Security","Growth","Speed"], a:0}
+]
+},
+
+{
+text:`Global warming is a pressing issue caused largely by human activities. Rising temperatures affect ecosystems and sea levels.`,
+questions:[
+{q:"Cause of global warming?", options:["Nature","Humans","Animals"], a:1},
+{q:"Effect?", options:["Cooling","Sea rise","Freezing"], a:1}
+]
+},
+
+{
+text:`Online education has become widespread, offering flexibility. However, it may lack interaction compared to traditional classrooms.`,
+questions:[
+{q:"Advantage?", options:["Flexibility","Cost","Books"], a:0},
+{q:"Disadvantage?", options:["Interaction","Speed","Access"], a:0}
+]
+}
+
+];
+
+let current = 0;
+let score = 0;
+
+// TIMER
+let time = 1200;
+setInterval(()=>{
+ let m=Math.floor(time/60);
+ let s=time%60;
+ document.getElementById("timer").innerText = m+":"+(s<10?"0":"")+s;
+ time--;
+ if(time<=0) finishTest();
+},1000);
+
+function loadPassage() {
+ let p = passages[current];
+ let html = `<div class="passage">${p.text}</div>`;
+ 
+ p.questions.forEach((q,i)=>{
+  html += `<p>${i+1}. ${q.q}</p>`;
+  q.options.forEach((opt,j)=>{
+    html += `<input type="radio" name="q${current}${i}" value="${j}"> ${opt}<br>`;
+  });
+ });
+ 
+ document.getElementById("content").innerHTML = html;
+}
+
+function nextPassage() {
+ let p = passages[current];
+ p.questions.forEach((q,i)=>{
+   let sel = document.querySelector(`input[name="q${current}${i}"]:checked`);
+   if(sel && parseInt(sel.value)===q.a) score++;
+ });
+
+ current++;
+ if(current < passages.length){
+   loadPassage();
+ } else {
+   finishTest();
+ }
+}
+
+function finishTest(){
+ document.getElementById("content").innerHTML="";
+ document.getElementById("result").innerText="Your score: "+score;
+}
+
+loadPassage();
+
+</script></body>
+</html>
