@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>IELTS Reading - Memory</title>
+
+<style>
+body{font-family:Arial;background:#1e3c72;color:white;margin:0;}
+.container{max-width:1000px;margin:auto;background:white;color:black;padding:20px;margin-top:20px;border-radius:10px;}
+.passage{white-space:pre-line;height:320px;overflow:auto;border:1px solid #ccc;padding:10px;}
+.correct{background:#c8f7c5;}
+.wrong{background:#f7c5c5;}
+.timer{color:red;text-align:right;font-weight:bold;}
+button{width:100%;padding:12px;margin-top:10px;background:#007bff;color:white;border:none;}
+.question{margin-top:10px;}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<h1>IELTS Reading (Memory)</h1>
+
+<div class="timer">⏱ <span id="time">15:00</span></div>
+<button onclick="start()">Start Test</button>
+
+<div id="test" style="display:none">
+
+<div class="passage">
+
+Memory is often perceived as a reliable record of past events. However, research in cognitive psychology has shown that human memory is highly reconstructive. Rather than retrieving exact copies of experiences, the brain actively rebuilds memories each time they are recalled.
+
+This process leaves memories vulnerable to distortion. External influences such as leading questions, social pressure, and even media exposure can alter recollections. As a result, individuals may confidently remember events that never actually occurred.
+
+One well-known experiment demonstrated that participants could be led to believe they had experienced childhood events that were entirely fabricated. Despite the lack of any real occurrence, many participants described these false memories in vivid detail.
+
+These findings have significant implications, particularly in legal contexts where eyewitness testimony is often considered crucial evidence.
+
+</div>
+
+<h3>Questions 1–5 (Matching)</h3>
+
+1 Main idea paragraph 1  
+<select onchange="check(this,0)">
+<option>Reconstructive memory</option>
+<option>False memory</option>
+<option>Legal issues</option>
+</select>
+
+2 Main idea paragraph 2  
+<select onchange="check(this,1)">
+<option>External influence</option>
+<option>Legal issues</option>
+<option>Memory accuracy</option>
+</select>
+
+3 Main idea paragraph 3  
+<select onchange="check(this,2)">
+<option>False memory experiment</option>
+<option>External influence</option>
+<option>Brain structure</option>
+</select>
+
+4 Main idea paragraph 4  
+<select onchange="check(this,3)">
+<option>Legal importance</option>
+<option>False memory</option>
+<option>Brain science</option>
+</select>
+
+5 Memory is described as  
+<select onchange="check(this,4)">
+<option>Perfect</option>
+<option>Reconstructive</option>
+<option>Fixed</option>
+</select>
+
+<h3>Questions 6–15 (TRUE / FALSE / NOT GIVEN)</h3>
+
+6 Memory is always accurate  
+<select onchange="check(this,5)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+7 Memory is rebuilt each time  
+<select onchange="check(this,6)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+8 Media can influence memory  
+<select onchange="check(this,7)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+9 People can remember unreal events  
+<select onchange="check(this,8)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+10 Experiments proved false memory  
+<select onchange="check(this,9)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+11 Memory works like a video  
+<select onchange="check(this,10)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+12 Social pressure affects memory  
+<select onchange="check(this,11)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+13 All memories are false  
+<select onchange="check(this,12)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+14 Eyewitness is important in law  
+<select onchange="check(this,13)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+15 Memory never changes  
+<select onchange="check(this,14)"><option>True</option><option>False</option><option>Not Given</option></select>
+
+<h3>Questions 16–25 (Fill)</h3>
+
+16 Memory is ______  
+<input oninput="checkText(this,15)">
+
+17 Brain ______ memories  
+<input oninput="checkText(this,16)">
+
+18 Memory affected by ______  
+<input oninput="checkText(this,17)">
+
+19 People remember ______ events  
+<input oninput="checkText(this,18)">
+
+20 False memories feel ______  
+<input oninput="checkText(this,19)">
+
+21 Memory is not ______  
+<input oninput="checkText(this,20)">
+
+22 Memory influenced by ______  
+<input oninput="checkText(this,21)">
+
+23 Memory important in ______  
+<input oninput="checkText(this,22)">
+
+24 Eyewitness used in ______  
+<input oninput="checkText(this,23)">
+
+25 Memory is ______ process  
+<input oninput="checkText(this,24)">
+
+<button onclick="finish()">Finish</button>
+<p id="result"></p>
+
+</div>
+</div>
+
+<script>
+
+let answers=[
+"Reconstructive memory","External influence","False memory experiment","Legal importance","Reconstructive",
+"False","True","True","True","True","False","True","False","True","False",
+"reconstructive","rebuilds","media","false","real",
+"perfect","questions","law","court","active"
+];
+
+let time=600,timer;
+
+function start(){
+ document.getElementById("test").style.display="block";
+
+ timer=setInterval(()=>{
+  let m=Math.floor(time/60);
+  let s=time%60;
+  if(s<10)s="0"+s;
+  document.getElementById("time").innerText=m+":"+s;
+  time--;
+  if(time<0) finish();
+ },1000);
+}
+
+function check(el,i){
+ el.classList.remove("correct","wrong");
+ if(el.value==answers[i]) el.classList.add("correct");
+ else el.classList.add("wrong");
+}
+
+function checkText(el,i){
+ el.classList.remove("correct","wrong");
+ if(el.value.toLowerCase()==answers[i].toLowerCase())
+  el.classList.add("correct");
+ else el.classList.add("wrong");
+}
+
+function finish(){
+ clearInterval(timer);
+
+ let score=0;
+
+ document.querySelectorAll("select").forEach((s,i)=>{
+  if(s.value==answers[i]) score++;
+ });
+
+ document.querySelectorAll("input").forEach((inp,i)=>{
+  if(inp.value.toLowerCase()==answers[i+15].toLowerCase()) score++;
+ });
+
+ let band=(score/25)*9;
+
+ document.getElementById("result").innerText=
+ "Score: "+score+"/25 | Band: "+band.toFixed(1);
+}
+
+</script>
+
+</body>
+</html>
