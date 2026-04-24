@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>IELTS Reading Advanced</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+}
+.passage{
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+  height:350px;
+  overflow:auto;
+  line-height:1.6;
+}
+.q{
+  margin-top:15px;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:orange;
+  border:none;
+  border-radius:8px;
+}
+.timer{
+  text-align:right;
+  color:red;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>IELTS Reading Advanced</h2>
+<div class="timer" id="timer">20:00</div>
+
+<div class="passage" id="text"></div>
+<div id="questions"></div>
+
+<button onclick="finish()">Finish</button>
+
+<h3 id="result"></h3>
+
+</div>
+
+<script>
+
+const readings = [
+
+{
+text:`In recent decades, the rapid advancement of technology has significantly altered the way individuals communicate and interact. Previously, communication was largely dependent on written letters and face-to-face interactions, both of which required considerable time and effort. However, with the development of digital platforms, communication has become almost instantaneous.
+
+The emergence of social media networks has allowed individuals to maintain connections across vast geographical distances. Despite these advantages, some researchers argue that digital communication lacks emotional depth. They suggest that the absence of physical presence can lead to misunderstandings and weaker interpersonal relationships.
+
+Moreover, concerns have been raised regarding privacy and data security. Users often share personal information without fully understanding how it may be used or stored. As technology continues to evolve, it is essential for both individuals and organizations to address these challenges responsibly.`,
+q:[
+{t:"tf",q:"Communication was faster in the past.",a:"False"},
+{t:"tf",q:"Technology improved communication speed.",a:"True"},
+{t:"mc",q:"Main concern?",o:["Speed","Privacy","Weather"],a:"Privacy"},
+{t:"gap",q:"People use ___ media.",a:"social"}
+]
+},
+
+{
+text:`Climate change has become one of the most pressing global issues in the modern era. Scientific research indicates that rising temperatures are largely the result of human activities, particularly the burning of fossil fuels and deforestation.
+
+These activities increase the concentration of greenhouse gases in the atmosphere, which trap heat and contribute to global warming. As a consequence, glaciers are melting, sea levels are rising, and extreme weather events are becoming more frequent.
+
+Although some individuals argue that climate change is a natural phenomenon, the overwhelming majority of scientists agree that human influence is the primary cause. Governments around the world are now implementing policies aimed at reducing emissions and promoting sustainable practices.`,
+q:[
+{t:"tf",q:"Climate change is only natural.",a:"False"},
+{t:"tf",q:"Humans contribute to climate change.",a:"True"},
+{t:"mc",q:"Main cause?",o:["Nature","Humans","Animals"],a:"Humans"},
+{t:"gap",q:"Sea ___ are rising.",a:"levels"}
+]
+},
+
+{
+text:`Education plays a crucial role in the development of both individuals and societies. It provides people with the knowledge and skills necessary to participate effectively in the workforce and contribute to economic growth.
+
+In recent years, online education has become increasingly popular. This mode of learning offers flexibility, allowing students to study at their own pace and from any location. However, critics argue that online learning may lack the interactive elements found in traditional classrooms.
+
+Face-to-face communication, immediate feedback, and group discussions are often limited in virtual environments. Despite these challenges, advancements in technology are continually improving the quality of online education.`,
+q:[
+{t:"tf",q:"Online education is less flexible.",a:"False"},
+{t:"tf",q:"Education helps society.",a:"True"},
+{t:"mc",q:"Advantage?",o:["Flexibility","Noise","Distance"],a:"Flexibility"},
+{t:"gap",q:"Education gives ___",a:"skills"}
+]
+},
+
+{
+text:`Artificial intelligence is transforming industries at an unprecedented rate. In sectors such as healthcare, finance, and transportation, AI systems are being used to enhance efficiency and accuracy.
+
+For example, in medicine, AI can analyze vast amounts of data to detect diseases at an early stage. This can significantly improve patient outcomes. However, the rise of AI has also raised concerns about job displacement and ethical considerations.
+
+Some experts argue that automation may replace certain types of jobs, particularly those involving repetitive tasks. Others emphasize the importance of establishing clear ethical guidelines to ensure that AI is used responsibly.`,
+q:[
+{t:"tf",q:"AI is used in healthcare.",a:"True"},
+{t:"tf",q:"AI has no risks.",a:"False"},
+{t:"mc",q:"Concern?",o:["Jobs","Sleep","Travel"],a:"Jobs"},
+{t:"gap",q:"AI improves ___",a:"efficiency"}
+]
+}
+
+];
+
+// RANDOM
+const current = readings[Math.floor(Math.random()*readings.length)];
+
+document.getElementById("text").innerText = current.text;
+
+// QUESTIONS
+let html="";
+current.q.forEach((q,i)=>{
+
+if(q.t=="tf"){
+html+=`
+<div class="q">
+${i+1}. ${q.q}<br>
+<input type="radio" name="q${i}" value="True">True
+<input type="radio" name="q${i}" value="False">False
+<input type="radio" name="q${i}" value="Not Given">Not Given
+</div>`;
+}
+
+if(q.t=="mc"){
+html+=`
+<div class="q">
+${i+1}. ${q.q}<br>`;
+q.o.forEach(opt=>{
+html+=`<input type="radio" name="q${i}" value="${opt}">${opt}<br>`;
+});
+html+=`</div>`;
+}
+
+if(q.t=="gap"){
+html+=`
+<div class="q">
+${i+1}. ${q.q}<br>
+<input type="text" id="q${i}">
+</div>`;
+}
+
+});
+
+document.getElementById("questions").innerHTML = html;
+
+// CHECK
+function finish(){
+let score=0;
+
+current.q.forEach((q,i)=>{
+let user;
+
+if(q.t=="gap"){
+user=document.getElementById("q"+i).value.toLowerCase();
+}else{
+let sel=document.querySelector(`input[name=q${i}]:checked`);
+user=sel?sel.value:null;
+}
+
+if(user==q.a.toLowerCase()) score++;
+});
+
+document.getElementById("result").innerText=
+"Score: "+score+" / "+current.q.length;
+}
+
+// TIMER
+let time=1200;
+setInterval(()=>{
+time--;
+let m=Math.floor(time/60);
+let s=time%60;
+document.getElementById("timer").innerText=
+m+":"+(s<10?"0":"")+s;
+},1000);
+
+</script>
+
+</body>
+  </html>
