@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambridge IELTS Reading Pro</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+}
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+}
+.timer {
+  text-align: right;
+  font-size: 24px;
+  color: #f87171;
+  font-weight: bold;
+}
+.card {
+  background: rgba(255,255,255,0.08);
+  padding: 20px;
+  border-radius: 14px;
+  margin-top: 20px;
+  animation: fadeIn 0.8s ease;
+}
+.passage {
+  max-height: 350px;
+  overflow-y: auto;
+  line-height: 1.7;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: orange;
+  font-size: 16px;
+  font-weight: bold;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+}
+label {
+  display: block;
+  margin-top: 5px;
+}
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Cambridge IELTS Reading Pro</h1>
+  <div class="timer" id="timer">12:00</div>
+
+  <div class="card">
+    <h2 id="title"></h2>
+    <div class="passage" id="passage"></div>
+  </div>
+
+  <div id="questions"></div>
+
+  <button onclick="finishExam()">Finish Exam</button>
+
+  <div class="card" id="result" style="display:none;"></div>
+</div>
+
+<script>
+const readings = [
+{
+ title: "Urban Farming",
+ text: `Urban farming has emerged as a practical solution to food insecurity in densely populated cities, where traditional agricultural land is scarce and supply chains are often vulnerable to disruption. Rooftops, abandoned warehouses, balconies, and vertical gardens are increasingly being transformed into productive agricultural spaces capable of producing fruits, vegetables, and herbs within city boundaries. In Paris, for example, large-scale rooftop farms now supply local communities with fresh produce while simultaneously reducing transportation emissions associated with imported food. Supporters argue that urban agriculture strengthens local food systems, creates employment opportunities, promotes sustainability, and reconnects urban residents with food production. Furthermore, these initiatives can improve food security during economic or environmental crises by decentralizing supply networks. However, critics point out that limited space, high setup costs, and technical challenges may restrict productivity when compared with conventional farming. Despite these concerns, technological advancements such as hydroponics, aeroponics, and controlled-environment agriculture continue to improve efficiency and output. Environmental planners increasingly view urban farming not merely as a supplement to traditional agriculture but as an essential feature of future sustainable cities. As urban populations continue to expand, many experts believe integrating agriculture into city planning will become crucial for environmental resilience, public health, and long-term food sustainability.`,
+ questions: [
+  {type:"tfng", q:"Urban farming can reduce transport emissions.", a:"True"},
+  {type:"tfng", q:"Urban farming is always inexpensive.", a:"False"},
+  {type:"tfng", q:"Paris has banned rooftop farming.", a:"False"},
+  {type:"gap", q:"Urban farming improves local food ____.", a:"systems"},
+  {type:"gap", q:"New technologies improve farming ____.", a:"efficiency"}
+ ]
+},
+{
+ title: "Green Roofs",
+ text: `Green roofs, which are rooftops partially or completely covered with vegetation, have become an increasingly prominent feature in modern urban architecture due to their wide-ranging environmental benefits. These structures consist of layered systems designed to support plant growth while protecting the building beneath. One of their primary advantages is temperature regulation; by absorbing sunlight and providing insulation, green roofs can significantly reduce heating and cooling costs throughout the year. Additionally, they improve air quality by filtering pollutants and producing oxygen in densely populated environments. Green roofs also play a crucial role in stormwater management by absorbing rainwater, thereby reducing runoff and decreasing pressure on urban drainage systems during heavy rainfall. This function can help minimize flooding risks in cities vulnerable to extreme weather events. Beyond these practical benefits, green roofs create habitats for birds, insects, and other species, supporting biodiversity in heavily urbanized areas. Although installation and maintenance costs can initially be high, many long-term studies indicate that savings in energy consumption, roof longevity, and environmental mitigation often outweigh the expenses. Researchers and city planners suggest that widespread adoption of green roofs could substantially improve urban sustainability while making cities healthier and more resilient.`,
+ questions: [
+  {type:"tfng", q:"Green roofs help control rainwater.", a:"True"},
+  {type:"tfng", q:"Green roofs increase flood risks.", a:"False"},
+  {type:"tfng", q:"All buildings are legally required to have green roofs.", a:"Not Given"},
+  {type:"gap", q:"Green roofs improve air ____.", a:"quality"},
+  {type:"gap", q:"They may reduce energy ____.", a:"consumption"}
+ ]
+},
+{
+ title: "Growth Mindset",
+ text: `Psychologist Carol Dweck introduced the concept of the growth mindset, a theory suggesting that intelligence, talent, and ability are not fixed traits but can be developed through dedication, strategic effort, and learning from failure. Individuals who adopt this mindset are more likely to embrace challenges, persist through setbacks, and interpret obstacles as opportunities for improvement rather than evidence of limitation. In contrast, those with a fixed mindset often avoid difficult tasks due to fear of failure, believing their abilities are static and unchangeable. Educational institutions around the world have increasingly incorporated growth mindset principles into teaching methodologies in an effort to improve student resilience, motivation, and academic outcomes. Teachers are encouraged to praise effort, strategy, and persistence rather than innate intelligence, fostering a culture of continuous improvement. While critics argue that mindset alone cannot eliminate structural inequalities or educational disadvantages, substantial evidence suggests that adopting growth-oriented beliefs can positively influence confidence, engagement, and long-term performance. As a result, the growth mindset framework continues to shape educational reform, workplace training, and personal development strategies globally.`,
+ questions: [
+  {type:"tfng", q:"A growth mindset encourages persistence.", a:"True"},
+  {type:"tfng", q:"Fixed mindset individuals enjoy failure.", a:"False"},
+  {type:"tfng", q:"Growth mindset guarantees success in all situations.", a:"Not Given"},
+  {type:"gap", q:"Growth mindset values ____.", a:"effort"},
+  {type:"gap", q:"Schools use it to improve student ____.", a:"motivation"}
+ ]
+},
+{
+ title: "Artificial Intelligence Ethics",
+ text: `Artificial intelligence is transforming industries worldwide by automating complex processes, analyzing vast datasets, and improving decision-making efficiency across healthcare, finance, transportation, manufacturing, and education. In medicine, AI systems can assist in early disease detection through advanced image recognition, while in finance they are used to identify fraud patterns and optimize investments. However, despite these benefits, the rapid expansion of AI has generated significant ethical concerns. Critics warn that algorithmic bias can unintentionally reinforce social inequalities when systems are trained on flawed or discriminatory data. Additionally, automation may displace workers in industries heavily dependent on repetitive or predictable tasks, raising concerns about economic inequality and workforce disruption. Questions surrounding accountability have also emerged, particularly when AI systems are entrusted with critical decisions in areas such as law enforcement, hiring, or medical diagnosis. If errors occur, determining responsibility can be legally and ethically complex. Advocates argue that transparent system design, robust regulation, and international ethical standards can mitigate these risks while preserving innovation. As AI becomes increasingly integrated into everyday life, balancing technological advancement with fairness, accountability, and social responsibility remains one of the defining global challenges of the modern era.`,
+ questions: [
+  {type:"tfng", q:"AI may reinforce inequalities.", a:"True"},
+  {type:"tfng", q:"AI has eliminated all workplace issues.", a:"False"},
+  {type:"tfng", q:"Global laws on AI are identical everywhere.", a:"Not Given"},
+  {type:"gap", q:"AI improves decision-making ____.", a:"efficiency"},
+  {type:"gap", q:"Ethical design requires ____.", a:"transparency"}
+ ]
+}
+];
+
+let current = readings[Math.floor(Math.random() * readings.length)];
+
+function loadExam() {
+ document.getElementById("title").innerText = current.title;
+ document.getElementById("passage").innerText = current.text;
+
+ let html = "";
+ current.questions.forEach((q, i) => {
+   html += `<div class="card"><p>${i+1}. ${q.q}</p>`;
+   if(q.type === "tfng") {
+     html += `
+       <label><input type="radio" name="q${i}" value="True"> True</label>
+       <label><input type="radio" name="q${i}" value="False"> False</label>
+       <label><input type="radio" name="q${i}" value="Not Given"> Not Given</label>
+     `;
+   } else {
+     html += `<input type="text" id="q${i}">`;
+   }
+   html += `</div>`;
+ });
+
+ document.getElementById("questions").innerHTML = html;
+}
+
+function finishExam() {
+ let score = 0;
+ current.questions.forEach((q, i) => {
+   let userAnswer;
+   if(q.type === "gap") {
+     userAnswer = document.getElementById(`q${i}`).value.trim().toLowerCase();
+   } else {
+     const selected = document.querySelector(`input[name="q${i}"]:checked`);
+     userAnswer = selected ? selected.value : "";
+   }
+   if(userAnswer.toLowerCase() === q.a.toLowerCase()) score++;
+ });
+
+ let band = (score / current.questions.length >= 0.8) ? "8.0+" :
+            (score / current.questions.length >= 0.6) ? "6.5+" :
+            (score / current.questions.length >= 0.4) ? "5.5+" : "Below 5.0";
+
+ const resultBox = document.getElementById("result");
+ resultBox.style.display = "block";
+ resultBox.innerHTML = `<h2>Score: ${score}/${current.questions.length}</h2><h3>Estimated Band: ${band}</h3>`;
+}
+
+let time = 720;
+const timer = setInterval(() => {
+ time--;
+ let minutes = Math.floor(time / 60);
+ let seconds = time % 60;
+ document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+ if(time <= 0) {
+   clearInterval(timer);
+   finishExam();
+ }
+}, 1000);
+
+loadExam();
+</script>
+</body>
+</html>
