@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambridge IELTS Pro Ultimate</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+}
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+}
+.timer {
+  text-align: right;
+  font-size: 24px;
+  color: #f87171;
+  font-weight: bold;
+}
+.card {
+  background: rgba(255,255,255,0.08);
+  padding: 20px;
+  border-radius: 14px;
+  margin-top: 20px;
+}
+.passage {
+  max-height: 350px;
+  overflow-y: auto;
+  line-height: 1.8;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: orange;
+  font-size: 16px;
+  font-weight: bold;
+}
+input[type="text"], textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+}
+label {
+  display: block;
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Cambridge IELTS Pro Ultimate</h1>
+
+<div class="timer" id="timer">12:00</div>
+
+<div class="card">
+  <h2 id="title"></h2>
+  <div class="passage" id="passage"></div>
+</div>
+
+<div id="questions"></div>
+
+<button onclick="finishExam()">Finish Reading Exam</button>
+
+<div class="card" id="result" style="display:none;"></div>
+
+<div class="card" id="writing-section">
+  <h2>IELTS Writing Task 2</h2>
+
+  <div id="topic-options"></div>
+
+  <textarea id="essay" rows="12" placeholder="Write your essay here..."></textarea>
+
+  <p>Word Count: <span id="word-count">0</span></p>
+
+  <div class="timer" id="writing-timer">40:00</div>
+
+  <button onclick="submitEssay()">Submit Writing</button>
+  <button onclick="checkEssay()">AI Check Essay</button>
+
+  <div id="writing-result"></div>
+  <div id="ai-feedback"></div>
+</div>
+
+</div>
+
+<script>
+// READING SYSTEM
+const readings = [
+{
+ title: "Urban Farming",
+ text: `Urban farming has emerged as a practical solution to food insecurity in densely populated cities, where traditional agricultural land is scarce and supply chains are vulnerable. Rooftops, abandoned buildings, and vertical gardens are increasingly transformed into productive agricultural spaces. In Paris, rooftop farms supply communities with fresh produce while reducing transportation emissions. Supporters argue urban agriculture strengthens food systems, creates jobs, and promotes sustainability. Critics highlight high costs and limited space, but innovations such as hydroponics continue improving productivity. Experts increasingly view urban farming as essential to future sustainable cities.`,
+ questions: [
+  {type:"tfng", q:"Urban farming can reduce transport emissions.", a:"True"},
+  {type:"tfng", q:"Urban farming is always cheap.", a:"False"},
+  {type:"tfng", q:"Paris banned rooftop farming.", a:"False"},
+  {type:"gap", q:"Urban farming improves local food ____.", a:"systems"},
+  {type:"gap", q:"New technology improves farming ____.", a:"efficiency"}
+ ]
+},
+{
+ title: "Artificial Intelligence Ethics",
+ text: `Artificial intelligence is transforming industries through automation, large-scale data analysis, and improved efficiency. In healthcare, finance, and transportation, AI increases productivity, but ethical concerns remain significant. Critics warn about algorithmic bias, social inequality, and job displacement. Questions about accountability arise when AI systems make critical decisions. Advocates emphasize transparency, regulation, and ethical oversight to reduce these risks. Balancing innovation with responsibility remains a major challenge.`,
+ questions: [
+  {type:"tfng", q:"AI may reinforce inequality.", a:"True"},
+  {type:"tfng", q:"AI solved all workplace issues.", a:"False"},
+  {type:"tfng", q:"All countries regulate AI equally.", a:"Not Given"},
+  {type:"gap", q:"AI improves decision-making ____.", a:"efficiency"},
+  {type:"gap", q:"Ethical AI requires ____.", a:"transparency"}
+ ]
+}
+];
+
+let current = readings[Math.floor(Math.random() * readings.length)];
+
+function loadExam() {
+ document.getElementById("title").innerText = current.title;
+ document.getElementById("passage").innerText = current.text;
+ let html = "";
+ current.questions.forEach((q, i) => {
+   html += `<div class="card"><p>${i+1}. ${q.q}</p>`;
+   if(q.type === "tfng") {
+     html += `
+     <label><input type="radio" name="q${i}" value="True"> True</label>
+     <label><input type="radio" name="q${i}" value="False"> False</label>
+     <label><input type="radio" name="q${i}" value="Not Given"> Not Given</label>`;
+   } else {
+     html += `<input type="text" id="q${i}">`;
+   }
+   html += `</div>`;
+ });
+ document.getElementById("questions").innerHTML = html;
+}
+
+function finishExam() {
+ let score = 0;
+ current.questions.forEach((q, i) => {
+   let answer = "";
+   if(q.type === "gap") {
+     answer = document.getElementById(`q${i}`).value.trim().toLowerCase();
+   } else {
+     const selected = document.querySelector(`input[name="q${i}"]:checked`);
+     answer = selected ? selected.value : "";
+   }
+   if(answer.toLowerCase() === q.a.toLowerCase()) score++;
+ });
+
+ let band = score >= 4 ? "7.0+" : score >= 3 ? "6.0+" : "Below 5.0";
+
+ document.getElementById("result").style.display = "block";
+ document.getElementById("result").innerHTML =
+ `<h2>Reading Score: ${score}/${current.questions.length}</h2><h3>Estimated Band: ${band}</h3>`;
+}
+
+let time = 720;
+const timer = setInterval(() => {
+ time--;
+ let m = Math.floor(time / 60);
+ let s = time % 60;
+ document.getElementById("timer").innerText = `${m}:${s < 10 ? "0" : ""}${s}`;
+ if(time <= 0) {
+   clearInterval(timer);
+   finishExam();
+ }
+}, 1000);
+
+// WRITING SYSTEM
+const writingTopics = [
+ "Some people believe technology makes life easier, while others think it creates more problems. Discuss both views and give your opinion.",
+ "Universities should focus more on practical skills than theory. To what extent do you agree or disagree?",
+ "Governments should invest more in public transport than roads. Discuss both views.",
+ "Young people are leaving rural areas for cities. What are the causes and solutions?",
+ "Online education is better than traditional learning. Discuss both views.",
+ "AI may replace human jobs. Discuss advantages and disadvantages."
+];
+
+function loadWritingTopics() {
+ let shuffled = [...writingTopics].sort(() => 0.5 - Math.random());
+ let selected = shuffled.slice(0, 3);
+ let html = "<h3>Choose one topic:</h3>";
+ selected.forEach((topic, i) => {
+   html += `<label><input type="radio" name="writingTopic" value="${topic}"> ${topic}</label>`;
+ });
+ document.getElementById("topic-options").innerHTML = html;
+}
+
+const essayBox = document.getElementById("essay");
+essayBox.addEventListener("input", function() {
+ let words = essayBox.value.trim().split(/\s+/).filter(Boolean).length;
+ document.getElementById("word-count").innerText = words;
+});
+
+let writingTime = 2400;
+const writingTimer = setInterval(() => {
+ writingTime--;
+ let m = Math.floor(writingTime / 60);
+ let s = writingTime % 60;
+ document.getElementById("writing-timer").innerText = `${m}:${s < 10 ? "0" : ""}${s}`;
+ if(writingTime <= 0) {
+   clearInterval(writingTimer);
+   submitEssay();
+ }
+}, 1000);
+
+function submitEssay() {
+ let words = essayBox.value.trim().split(/\s+/).filter(Boolean).length;
+ let band = words >= 250 ? "Estimated Writing Band: 6.5+" : "Below 6.0 (Too short)";
+ document.getElementById("writing-result").innerHTML = `<h3>${band}</h3><p>Essay saved for practice.</p>`;
+ localStorage.setItem("IELTS_WRITING", essayBox.value);
+}
+
+function checkEssay() {
+ let essay = essayBox.value;
+ let words = essay.trim().split(/\s+/).filter(Boolean).length;
+ let feedback = "";
+
+ if(words < 250) feedback += "❌ Essay too short (minimum 250 words)<br>";
+ if(essay.includes("very very")) feedback += "⚠ Avoid repeated words<br>";
+ if(!essay.includes(".")) feedback += "⚠ Add punctuation for sentence clarity<br>";
+ if(essay.length > 0) feedback += "✅ Estimated Band: " + (words >= 250 ? "6.5+" : "5.0");
+
+ document.getElementById("ai-feedback").innerHTML = feedback;
+}
+
+loadExam();
+loadWritingTopics();
+</script>
+</body>
+  </html>
